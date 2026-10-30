@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: digital_wallet
+      POSTGRES_USER: wallet
+      POSTGRES_PASSWORD: wallet
+    ports: ["5432:5432"]
+    volumes: [wallet_data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U wallet -d digital_wallet"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  api:
+    build: .
+    environment:
+      DATABASE_URL: postgresql+psycopg://wallet:wallet@db:5432/digital_wallet
+      SECRET_KEY: docker-development-secret
+    ports: ["8000:8000"]
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  wallet_data:
