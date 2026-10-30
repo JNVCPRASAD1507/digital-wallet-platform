@@ -1,0 +1,7 @@
+{"info":{"name":"Digital Wallet API","schema":"https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},
+"variable":[{"key":"baseUrl","value":"http://localhost:8000"},{"key":"accessToken","value":""},{"key":"walletId","value":""}],
+"item":[
+{"name":"Register","request":{"method":"POST","url":"{{baseUrl}}/api/auth/register","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"email\":\"customer@example.com\",\"full_name\":\"Customer\",\"password\":\"Password123!\"}"}}},
+{"name":"Login","request":{"method":"POST","url":"{{baseUrl}}/api/auth/login","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"email\":\"customer@example.com\",\"password\":\"Password123!\"}"}}},
+{"name":"Create Wallet","request":{"method":"POST","url":"{{baseUrl}}/api/wallets","header":[{"key":"Authorization","value":"Bearer {{accessToken}}"},{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\"currency\":\"INR\"}"}}}
+]}

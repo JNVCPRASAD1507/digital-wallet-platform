@@ -1,0 +1,13 @@
+erDiagram
+ USERS ||--o{ WALLETS : owns
+ USERS ||--o{ REFRESH_TOKENS : has
+ USERS ||--o{ NOTIFICATIONS : receives
+ USERS ||--o{ IDEMPOTENCY_KEYS : creates
+ USERS ||--o{ AUDIT_LOGS : creates
+ WALLETS ||--o{ TRANSACTIONS : contains
+ WALLETS ||--o{ DEPOSITS : receives
+ WALLETS ||--o{ WITHDRAWALS : funds
+ WALLETS ||--o{ TRANSFERS : sends
+ WALLETS ||--o{ TRANSFERS : receives
+ TRANSACTIONS ||--o| REFUNDS : has
+ TRANSACTIONS ||--o| SUSPICIOUS_TRANSACTIONS : flagged
