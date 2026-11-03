@@ -1,4 +1,3 @@
-
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -11,7 +10,6 @@ from app.dependencies.auth import current_user
 from app.models import Wallet
 from app.schemas import WalletCreate, WalletOut
 from app.services.wallet import create, status
-
 
 router = APIRouter()
 
@@ -38,7 +36,6 @@ def get_wallet_for_status_change(
         )
 
     return w
-
 
 
 @router.post("", response_model=WalletOut, status_code=201)
@@ -88,10 +85,7 @@ def patch(
 ):
     w = db.get(Wallet, wid)
 
-    if not w or (
-        w.user_id != u.id
-        and u.role not in {Role.ADMIN, Role.SUPER_ADMIN}
-    ):
+    if not w or (w.user_id != u.id and u.role not in {Role.ADMIN, Role.SUPER_ADMIN}):
         raise DomainError("FORBIDDEN", "Not authorized", 403)
 
     w.currency = x.currency.upper()
@@ -107,7 +101,10 @@ def freeze(
     db: Session = Depends(get_db),
     u=Depends(current_user),
 ):
-    if u.role not in {Role.ADMIN, Role.SUPER_ADMIN} and db.get(Wallet, wid).user_id != u.id:
+    if (
+        u.role not in {Role.ADMIN, Role.SUPER_ADMIN}
+        and db.get(Wallet, wid).user_id != u.id
+    ):
         raise DomainError("FORBIDDEN", "Not authorized", 403)
 
     return status(db, wid, WalletStatus.FROZEN)
@@ -119,7 +116,10 @@ def unfreeze(
     db: Session = Depends(get_db),
     u=Depends(current_user),
 ):
-    if u.role not in {Role.ADMIN, Role.SUPER_ADMIN} and db.get(Wallet, wid).user_id != u.id:
+    if (
+        u.role not in {Role.ADMIN, Role.SUPER_ADMIN}
+        and db.get(Wallet, wid).user_id != u.id
+    ):
         raise DomainError("FORBIDDEN", "Not authorized", 403)
 
     return status(db, wid, WalletStatus.ACTIVE)

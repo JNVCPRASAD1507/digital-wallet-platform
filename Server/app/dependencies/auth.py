@@ -1,4 +1,3 @@
-
 from fastapi import Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
@@ -8,7 +7,6 @@ from app.core.enums import Role
 from app.core.exceptions import DomainError
 from app.core.security import decode
 from app.models import User
-
 
 bearer_scheme = HTTPBearer()
 

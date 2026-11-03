@@ -1,4 +1,3 @@
-
 from fastapi.responses import JSONResponse
 
 
@@ -21,4 +20,3 @@ async def handler(request, exc: DomainError):
             },
         },
     )
-
