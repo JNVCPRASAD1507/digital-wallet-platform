@@ -33,9 +33,25 @@ def note(db, uid, title, msg):
     db.add(Notification(user_id=uid, title=title, message=msg))
 
 
-def ledger(db, w, typ, amount, ref, uid, desc):
-    before = Decimal(w.available_balance)
-    after = before + amount
+# def ledger(db, w, typ, amount, ref, uid, desc):
+#     before = Decimal(w.available_balance)
+#     after = before + amount
+#     db.add(
+#         Transaction(
+#             wallet_id=w.id,
+#             transaction_type=typ,
+#             amount=amount,
+#             balance_before=before,
+#             balance_after=after,
+#             reference_entity=ref[0],
+#             reference_id=str(ref[1]),
+#             description=desc,
+#             created_by=uid,
+#         )
+#     )
+
+
+def ledger(db, w, typ, amount, ref, uid, desc, before, after):
     db.add(
         Transaction(
             wallet_id=w.id,
@@ -69,11 +85,30 @@ def deposit(db, user, wid, amount, key):
         status=OperationStatus.COMPLETED,
         reference_number=f"DEP-{uuid4().hex[:16]}",
     )
+    # db.add(d)
+    # w.available_balance = Decimal(w.available_balance) + amount
+    # db.flush()
+    # ledger(
+    #     db, w, TransactionType.DEPOSIT, amount, ("deposit", d.id), user.id, "Deposit"
+    # )
     db.add(d)
-    w.available_balance = Decimal(w.available_balance) + amount
     db.flush()
+
+    before = Decimal(w.available_balance)
+    after = before + amount
+
+    w.available_balance = after
+
     ledger(
-        db, w, TransactionType.DEPOSIT, amount, ("deposit", d.id), user.id, "Deposit"
+        db,
+        w,
+        TransactionType.DEPOSIT,
+        amount,
+        ("deposit", d.id),
+        user.id,
+        "Deposit",
+        before,
+        after,
     )
     db.add(
         IdempotencyKey(
@@ -106,9 +141,15 @@ def withdraw(db, user, wid, amount, key):
         status=OperationStatus.COMPLETED,
         reference_number=f"WDR-{uuid4().hex[:16]}",
     )
+
     db.add(x)
-    w.available_balance = Decimal(w.available_balance) - amount
     db.flush()
+
+    before = Decimal(w.available_balance)
+    after = before - amount
+
+    w.available_balance = after
+
     ledger(
         db,
         w,
@@ -117,6 +158,8 @@ def withdraw(db, user, wid, amount, key):
         ("withdrawal", x.id),
         user.id,
         "Withdrawal",
+        before,
+        after,
     )
     db.add(
         IdempotencyKey(
